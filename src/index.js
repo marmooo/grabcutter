@@ -186,6 +186,7 @@ class LoadPanel extends Panel {
       filter.mask.delete();
       filter.bgdModel.delete();
       filter.fgdModel.delete();
+      filterPanel.paintPad.clear();
     }
     setTimeout(() => {
       filter.apply(...filter.defaultOptions);
