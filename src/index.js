@@ -188,8 +188,10 @@ class LoadPanel extends Panel {
       filter.fgdModel.delete();
       filterPanel.paintPad.clear();
     }
+    filterPanel.canvas.classList.add("loading");
     setTimeout(() => {
       filter.apply(...filter.defaultOptions);
+      filterPanel.canvas.classList.remove("loading");
     }, 0);
   };
 
