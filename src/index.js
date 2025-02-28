@@ -541,11 +541,14 @@ class FilterPanel extends LoadPanel {
 }
 
 loadConfig();
-setTransparentCSSVariables();
-const filterPanel = new FilterPanel(document.getElementById("filterPanel"));
-const loadPanel = new LoadPanel(document.getElementById("loadPanel"));
 initLangSelect();
 initTooltip();
+setTransparentCSSVariables();
+await loadScript(await getOpenCVPath());
+cv = await cv();
+
+const filterPanel = new FilterPanel(document.getElementById("filterPanel"));
+const loadPanel = new LoadPanel(document.getElementById("loadPanel"));
 document.getElementById("toggleDarkMode").onclick = toggleDarkMode;
 globalThis.addEventListener("resize", () => {
   filterPanel.resizePaintPad();
@@ -564,6 +567,3 @@ globalThis.addEventListener("paste", (event) => {
   if (!file) return;
   loadPanel.loadFile(file);
 });
-
-await loadScript(await getOpenCVPath());
-cv = await cv();
