@@ -326,10 +326,11 @@ class FilterPanel extends LoadPanel {
     canvas.width = size * 2;
     canvas.height = size * 2;
     const context = canvas.getContext("2d");
-    context.beginPath();
-    context.arc(size, size, size, 0, Math.PI * 2);
-    context.fillStyle = "rgba(0, 0, 0, 0.5)";
+    context.fillStyle = "rgba(255, 255, 255, 0.5)";
     context.fill();
+    context.strokeStyle = "rgba(0, 0, 0, 0.5)";
+    context.lineWidth = 1;
+    context.stroke();
     const dataURL = canvas.toDataURL();
     target.style.cursor = `url(${dataURL}) ${size} ${size}, auto`;
   }
