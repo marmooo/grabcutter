@@ -264,7 +264,11 @@ class FilterPanel extends LoadPanel {
     this.paintPad = new signaturePad(this.paintCanvas);
     this.updatePenSize(16);
     this.paintPad.addEventListener("endStroke", () => {
-      this.currentFilter.apply();
+      this.canvas.classList.add("loading");
+      setTimeout(() => {
+        this.currentFilter.apply();
+        this.canvas.classList.remove("loading");
+      }, 0);
     });
     this.frontWell = panel.querySelector(".front");
     this.eraserWell = panel.querySelector(".eraser");
@@ -393,19 +397,6 @@ class FilterPanel extends LoadPanel {
       a.remove();
       URL.revokeObjectURL(url);
     }, "image/png");
-  }
-
-  filterSelect(event) {
-    const options = event.target.options;
-    const selectedIndex = options.selectedIndex;
-    const prevClass = options[this.selectedIndex].value;
-    const currClass = options[selectedIndex].value;
-    this.panel.querySelector(`.${prevClass}`).classList.add("d-none");
-    this.panel.querySelector(`.${currClass}`).classList.remove("d-none");
-    this.selectedIndex = selectedIndex;
-    const filter = this.filters[currClass];
-    this.currentFilter = filter;
-    filter.apply(...filter.defaultOptions);
   }
 
   addEvents(panel) {
