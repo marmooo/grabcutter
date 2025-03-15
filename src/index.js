@@ -438,6 +438,7 @@ class FilterPanel extends LoadPanel {
         iterations: panel.querySelector(".iterations"),
       },
       mask: undefined,
+      initialMask: undefined,
       bgdModel: undefined,
       fgdModel: undefined,
       firstRun: true,
@@ -445,7 +446,7 @@ class FilterPanel extends LoadPanel {
     this.addInputEvents(this.filters.grabCut);
   }
 
-  updateMask(mask, rows, cols) {
+  updateMask(mask, initialMask, rows, cols) {
     const resizedCanvas = document.createElement("canvas");
     resizedCanvas.width = cols;
     resizedCanvas.height = rows;
@@ -457,23 +458,16 @@ class FilterPanel extends LoadPanel {
     resizedCanvasContext.drawImage(this.paintCanvas, 0, 0, cols, rows);
     const imageData = resizedCanvasContext.getImageData(0, 0, cols, rows);
     const uint8Array = imageData.data;
-    // // slow but safe
-    // for (let y = 0; y < mask.rows; y++) {
-    //   for (let x = 0; x < mask.cols; x++) {
-    //     const index = (y * mask.cols + x) * 4;
-    //     const r = uint8Array[index];
-    //     if (r === 1) mask.ucharPtr(y, x)[0] = 0;
-    //     if (r === 255) mask.ucharPtr(y, x)[0] = 1;
-    //   }
-    // }
-    // fast but danger
-    const maskDataPtr = mask.data.byteOffset;
-    const maskSize = mask.rows * mask.cols;
-    const heap = cv.HEAPU8.subarray(maskDataPtr, maskDataPtr + maskSize);
-    for (let i = 0; i < maskSize; i++) {
+    const maskData = mask.data;
+    for (let i = 0; i < maskData.length; i++) {
       const r = uint8Array[i * 4];
-      if (r === 1) heap[i] = 0;
-      if (r === 255) heap[i] = 1;
+      if (r === 1) {
+        maskData[i] = 0;
+      } else if (r === 255) {
+        maskData[i] = 1;
+      } else {
+        maskData[i] = initialMask[i];
+      }
     }
   }
 
@@ -501,9 +495,10 @@ class FilterPanel extends LoadPanel {
         iterations,
         cv.GC_INIT_WITH_RECT,
       );
+      filter.initialMask = filter.mask.data.slice();
       filter.firstRun = false;
     } else {
-      this.updateMask(filter.mask, src.rows, src.cols);
+      this.updateMask(filter.mask, filter.initialMask, src.rows, src.cols);
       cv.grabCut(
         src,
         filter.mask,
