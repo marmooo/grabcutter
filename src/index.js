@@ -190,7 +190,7 @@ class LoadPanel extends Panel {
     }
     filterPanel.canvas.classList.add("loading");
     setTimeout(() => {
-      filter.apply(...filter.defaultOptions);
+      filter.apply();
       filterPanel.canvas.classList.remove("loading");
     }, 0);
   };
@@ -407,7 +407,13 @@ class FilterPanel extends LoadPanel {
 
   addInputEvents(filter) {
     for (const input of Object.values(filter.inputs)) {
-      input.addEventListener("input", () => filter.apply());
+      input.addEventListener("input", () => {
+        this.canvas.classList.add("loading");
+        setTimeout(() => {
+          this.currentFilter.apply();
+          this.canvas.classList.remove("loading");
+        }, 0);
+      });
     }
     for (const node of filter.root.querySelectorAll("button[title=reset]")) {
       node.onclick = () => {
@@ -424,7 +430,6 @@ class FilterPanel extends LoadPanel {
       apply: (iterations) => {
         this.grabCut(iterations);
       },
-      defaultOptions: [1],
       inputs: {
         iterations: panel.querySelector(".iterations"),
       },
