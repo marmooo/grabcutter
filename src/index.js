@@ -297,7 +297,7 @@ class FilterPanel extends LoadPanel {
 
     panel.querySelector(".moveTop").onclick = () => this.moveLoadPanel();
     panel.querySelector(".download").onclick = () => this.download();
-    this.addEvents(panel);
+    this.addFilters(panel);
   }
 
   toggleCanvas() {
@@ -399,7 +399,7 @@ class FilterPanel extends LoadPanel {
     }, "image/png");
   }
 
-  addEvents(panel) {
+  addFilters(panel) {
     this.filtering = false;
     this.addGrabCutEvents(panel);
     this.currentFilter = this.filters.grabCut;
