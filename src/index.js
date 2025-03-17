@@ -181,9 +181,9 @@ class LoadPanel extends Panel {
     const img = event.currentTarget;
     filterPanel.setCanvas(img);
     const filter = filterPanel.currentFilter;
-    if (!filter.firstRun) {
-      filter.firstRun = true;
+    if (filter.mask) {
       filter.mask.delete();
+      filter.mask = null;
       filter.bgdModel.delete();
       filter.fgdModel.delete();
       filterPanel.paintPad.clear();
@@ -429,7 +429,6 @@ class FilterPanel extends LoadPanel {
       initialMask: undefined,
       bgdModel: undefined,
       fgdModel: undefined,
-      firstRun: true,
     };
     this.addInputEvents(this.filters.grabCut);
   }
@@ -470,7 +469,18 @@ class FilterPanel extends LoadPanel {
     cv.cvtColor(src, src, cv.COLOR_RGBA2RGB, 0);
     const gap = 1;
     const rect = new cv.Rect(gap, gap, src.cols - gap, src.rows - gap);
-    if (filter.firstRun) {
+    if (filter.mask) {
+      this.updateMask(filter.mask, filter.initialMask, src.rows, src.cols);
+      cv.grabCut(
+        src,
+        filter.mask,
+        rect,
+        filter.bgdModel,
+        filter.fgdModel,
+        iterations,
+        cv.GC_EVAL,
+      );
+    } else {
       filter.mask = new cv.Mat();
       filter.bgdModel = new cv.Mat();
       filter.fgdModel = new cv.Mat();
@@ -484,18 +494,6 @@ class FilterPanel extends LoadPanel {
         cv.GC_INIT_WITH_RECT,
       );
       filter.initialMask = filter.mask.data.slice();
-      filter.firstRun = false;
-    } else {
-      this.updateMask(filter.mask, filter.initialMask, src.rows, src.cols);
-      cv.grabCut(
-        src,
-        filter.mask,
-        rect,
-        filter.bgdModel,
-        filter.fgdModel,
-        iterations,
-        cv.GC_EVAL,
-      );
     }
     cv.cvtColor(src, src, cv.COLOR_RGB2RGBA, 0);
     const srcData = src.data32S;
