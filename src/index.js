@@ -366,6 +366,7 @@ class FilterPanel extends LoadPanel {
     this.paintCanvas.height = actualRect.height;
     this.paintCanvas.style.top = `${actualRect.top}px`;
     this.paintCanvas.style.left = `${actualRect.left}px`;
+    this.paintPad.fromData(this.paintPad.toData());
   }
 
   show() {
