@@ -300,14 +300,6 @@ class FilterPanel extends LoadPanel {
     this.addFilters(panel);
   }
 
-  toggleCanvas() {
-    if (this.canvas.parentNode) {
-      this.canvas.replaceWith(this.originalCanvas);
-    } else {
-      this.originalCanvas.replaceWith(this.canvas);
-    }
-  }
-
   resizeWell(target) {
     [this.frontWell, this.eraserWell, this.backWell].forEach((well) => {
       if (well === target) {
