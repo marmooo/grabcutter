@@ -420,9 +420,7 @@ class FilterPanel extends LoadPanel {
   addGrabCutEvents(panel) {
     this.filters.grabCut = {
       root: panel,
-      apply: (iterations) => {
-        this.grabCut(iterations);
-      },
+      apply: () => this.grabCut(),
       inputs: {
         iterations: panel.querySelector(".iterations"),
       },
@@ -459,13 +457,9 @@ class FilterPanel extends LoadPanel {
     }
   }
 
-  grabCut(iterations) {
+  grabCut() {
     const filter = this.filters.grabCut;
-    if (iterations === undefined) {
-      iterations = Number(filter.inputs.iterations.value);
-    } else {
-      filter.inputs.iterations.value = iterations;
-    }
+    const iterations = Number(filter.inputs.iterations.value);
     const src = cv.imread(this.originalCanvas);
     cv.cvtColor(src, src, cv.COLOR_RGBA2RGB, 0);
     const gap = 1;
