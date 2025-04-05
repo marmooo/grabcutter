@@ -1,4 +1,4 @@
-const CACHE_NAME = "2025-03-23 17:00";
+const CACHE_NAME = "2025-04-06 01:35";
 const urlsToCache = [
   "/grabcutter/",
   "/grabcutter/en/",
