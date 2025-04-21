@@ -174,11 +174,28 @@
                 </div>
               </div>
               <hr>
-              <div class="form-group d-flex align-items-center">
-                <div class="filterLabel col-form-label-sm">Iterations</div>
-                <div class="d-flex w-100">
-                  <input type="range" class="iterations form-range" min="1" max="10" step="1" value="1" data-value="1">
-                  <button title="reset" class="btn p-0" type="button">↩️</button>
+              <div class="grabCut">
+                <div class="form-group d-flex align-items-center">
+                  <div class="filterLabel col-form-label-sm">Iterations</div>
+                  <div class="d-flex w-100">
+                    <input type="range" class="iterations form-range" min="1" max="10" step="1" value="1" data-value="1">
+                    <button title="reset" class="btn p-0" type="button">↩️</button>
+                  </div>
+                </div>
+              </div>
+              <div class="fillBackground">
+                <div class="form-group d-flex align-items-center">
+                  <div class="filterLabel col-form-label-sm">Bg color</div>
+                  <div class="d-flex w-100">
+                    <input type="color" class="bgColor" value="#008080" data-value="#008080">
+                  </div>
+                </div>
+                <div class="form-group d-flex align-items-center">
+                  <div class="filterLabel col-form-label-sm">Bg opacity</div>
+                  <div class="d-flex w-100">
+                    <input type="range" class="bgOpacity form-range" min="0" max="255" step="1" value="255" data-value="255">
+                    <button title="reset" class="btn p-0" type="button">↩️</button>
+                  </div>
                 </div>
               </div>
             </div>

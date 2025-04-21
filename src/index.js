@@ -268,7 +268,14 @@ class FilterPanel extends LoadPanel {
       willReadFrequently: true,
     });
     this.canvasContainer = this.canvas.parentNode;
+    this.setPen(panel);
 
+    panel.querySelector(".moveTop").onclick = () => this.moveLoadPanel();
+    panel.querySelector(".download").onclick = () => this.download();
+    this.addFilters(panel);
+  }
+
+  setPen(panel) {
     this.paintCanvas = panel.querySelector(".paintCanvas");
     this.paintCanvas.style.opacity = 0.5;
     this.paintCanvasContext = this.paintCanvas.getContext("2d", {
@@ -307,10 +314,6 @@ class FilterPanel extends LoadPanel {
     panel.querySelector(".opacity").oninput = (event) => {
       this.originalCanvas.style.opacity = event.target.value;
     };
-
-    panel.querySelector(".moveTop").onclick = () => this.moveLoadPanel();
-    panel.querySelector(".download").onclick = () => this.download();
-    this.addFilters(panel);
   }
 
   resizeWell(target) {
@@ -406,8 +409,8 @@ class FilterPanel extends LoadPanel {
   }
 
   addFilters(panel) {
-    this.filtering = false;
     this.addGrabCutEvents(panel);
+    this.addFillBackgroundEvents(panel);
     this.currentFilter = this.filters.grabCut;
   }
 
@@ -416,7 +419,7 @@ class FilterPanel extends LoadPanel {
       input.addEventListener("input", () => {
         this.canvas.classList.add("loading");
         setTimeout(() => {
-          this.currentFilter.apply();
+          filter.apply();
           this.canvas.classList.remove("loading");
         }, 0);
       });
@@ -431,11 +434,12 @@ class FilterPanel extends LoadPanel {
   }
 
   addGrabCutEvents(panel) {
+    const root = panel.querySelector(".grabCut");
     this.filters.grabCut = {
-      root: panel,
+      root,
       apply: () => this.grabCut(),
       inputs: {
-        iterations: panel.querySelector(".iterations"),
+        iterations: root.querySelector(".iterations"),
       },
       mask: undefined,
       initialMask: undefined,
@@ -504,15 +508,46 @@ class FilterPanel extends LoadPanel {
       filter.initialMask = filter.mask.data.slice();
     }
     cv.cvtColor(src, src, cv.COLOR_RGB2RGBA, 0);
-    const srcData = src.data32S;
-    const maskData = filter.mask.data;
-    for (let i = 0; i < srcData.length; i++) {
-      if (maskData[i] % 2 === 0) {
-        srcData[i] = 0;
-      }
-    }
+    this.fillBackground(src.data32S);
     cv.imshow(this.canvas, src);
     src.delete();
+  }
+
+  addFillBackgroundEvents(panel) {
+    const root = panel.querySelector(".fillBackground");
+    this.filters.fillBackground = {
+      root,
+      apply: () => {
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        const imageData = this.canvasContext.getImageData(0, 0, w, h);
+        const uint32Array = new Uint32Array(imageData.data.buffer);
+        this.fillBackground(uint32Array),
+          this.canvasContext.putImageData(imageData, 0, 0);
+      },
+      inputs: {
+        bgColor: root.querySelector(".bgColor"),
+        bgOpacity: root.querySelector(".bgOpacity"),
+      },
+    };
+    this.addInputEvents(this.filters.fillBackground);
+  }
+
+  fillBackground(uint32Array) {
+    const filter = this.filters.fillBackground;
+    const color = filter.inputs.bgColor.value;
+    const opacity = Number(filter.inputs.bgOpacity.value);
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    const a = opacity;
+    const rgba = (a << 24) | (b << 16) | (g << 8) | r;
+    const maskData = this.filters.grabCut.mask.data;
+    for (let i = 0; i < uint32Array.length; i++) {
+      if (maskData[i] % 2 === 0) {
+        uint32Array[i] = rgba;
+      }
+    }
   }
 
   setCanvas(canvas) {
