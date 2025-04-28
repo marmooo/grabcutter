@@ -449,7 +449,9 @@ class FilterPanel extends LoadPanel {
     this.addInputEvents(this.filters.grabCut);
   }
 
-  updateMask(mask, initialMask, rows, cols) {
+  updateMask(mask, initialMask) {
+    const cols = mask.cols;
+    const rows = mask.rows;
     const resizedCanvas = document.createElement("canvas");
     resizedCanvas.width = cols;
     resizedCanvas.height = rows;
@@ -482,7 +484,7 @@ class FilterPanel extends LoadPanel {
     const gap = 1;
     const rect = new cv.Rect(gap, gap, src.cols - gap, src.rows - gap);
     if (filter.mask) {
-      this.updateMask(filter.mask, filter.initialMask, src.rows, src.cols);
+      this.updateMask(filter.mask, filter.initialMask);
       cv.grabCut(
         src,
         filter.mask,
