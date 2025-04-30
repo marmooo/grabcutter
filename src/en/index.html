@@ -48,7 +48,7 @@
         background-image: var(--transparent-bg-dark, none);
       }
       .loading { transition: filter 2s; filter: brightness(200%); }
-      .originalImage { top: 0; left: 0; opacity:.1; }
+      .originalImage { top: 0; left: 0; opacity:0.2; }
       .paintCanvas { top: 0; left: 0; }
       .paintPanel { display:flex; justify-content:center; align-items:center; height:96px; }
       .palette { display:flex; justify-content:center; align-items:center; }
@@ -169,7 +169,7 @@
               <div class="form-group d-flex align-items-center">
                 <div class="filterLabel col-form-label-sm">Opacity</div>
                 <div class="d-flex w-100">
-                  <input type="range" class="opacity form-range" min="0" max="1" step="0.01" value="0.5" data-value="0.5">
+                  <input type="range" class="opacity form-range" min="0" max="1" step="0.01" value="0.2" data-value="0.2">
                   <button title="reset" class="btn p-0" type="button">↩️</button>
                 </div>
               </div>
