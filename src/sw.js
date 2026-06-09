@@ -1,6 +1,5 @@
-const cacheName = "2026-06-09 00:00";
+const cacheName = "2026-06-09 14:00";
 const urlsToCache = [
-  "/grabcutter/coi-serviceworker.js",
   "/grabcutter/index.js",
   "/grabcutter/img/before.webp",
   "/grabcutter/img/after.webp",
@@ -9,7 +8,6 @@ const urlsToCache = [
   "/grabcutter/img/cat-64.webp",
   "/grabcutter/img/castle-64.webp",
   "/grabcutter/favicon/favicon.svg",
-  "https://cdn.jsdelivr.net/npm/wasm-feature-detect@1.8.0/dist/umd/index.min.js",
 ];
 
 importScripts(
@@ -20,26 +18,25 @@ async function getOpenCVPath() {
   const simdSupport = await wasmFeatureDetect.simd();
   const threadsSupport = self.crossOriginIsolated &&
     await wasmFeatureDetect.threads();
+
   if (simdSupport && threadsSupport) {
     return "/grabcutter/opencv/threaded-simd/opencv_js.js";
-  } else if (simdSupport) {
-    return "/grabcutter/opencv/simd/opencv_js.js";
-  } else if (threadsSupport) {
-    return "/grabcutter/opencv/threads/opencv_js.js";
-  } else {
-    return "/grabcutter/opencv/wasm/opencv_js.js";
   }
+  if (simdSupport) return "/grabcutter/opencv/simd/opencv_js.js";
+  if (threadsSupport) return "/grabcutter/opencv/threads/opencv_js.js";
+  return "/grabcutter/opencv/wasm/opencv_js.js";
 }
 
 async function addOpenCVPaths() {
   const opencvPath = await getOpenCVPath();
-  urlsToCache.push(opencvPath);
-  urlsToCache.push(opencvPath.slice(0, -3) + ".wasm");
+  if (!urlsToCache.includes(opencvPath)) {
+    urlsToCache.push(opencvPath);
+    urlsToCache.push(opencvPath.replace(".js", ".wasm"));
+  }
 }
 
-addOpenCVPaths();
-
 async function preCache() {
+  await addOpenCVPaths();
   const cache = await caches.open(cacheName);
   await Promise.all(
     urlsToCache.map((url) =>
@@ -50,8 +47,29 @@ async function preCache() {
 }
 
 async function handleFetch(event) {
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) {
+    return fetch(event.request);
+  }
   const cached = await caches.match(event.request);
-  return cached || fetch(event.request);
+  if (cached) return cached;
+  try {
+    const response = await fetch(event.request);
+    if (response.status === 200) {
+      const newHeaders = new Headers(response.headers);
+      newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+      newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      });
+    }
+    return response;
+  } catch (err) {
+    console.error("Fetch failed:", event.request.url, err);
+    throw err;
+  }
 }
 
 async function cleanOldCaches() {
