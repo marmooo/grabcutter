@@ -1,4 +1,4 @@
-const cacheName = "2026-06-09 14:00";
+const cacheName = "2026-06-10 00:00";
 const urlsToCache = [
   "/grabcutter/index.js",
   "/grabcutter/img/before.webp",
