@@ -274,7 +274,7 @@ class FilterPanel extends LoadPanel {
     this.paintCanvasContext = this.paintCanvas.getContext("2d", {
       willReadFrequently: true,
     });
-    this.paintPad = new signaturePad(this.paintCanvas);
+    this.paintPad = new signaturePad(this.paintCanvas, { penColor: "#010000" });
     this.updatePenSize(16);
     this.paintPad.addEventListener("endStroke", () => {
       this.canvas.classList.add("loading");
