@@ -1,4 +1,4 @@
-const cacheName = "2026-06-10 00:00";
+const cacheName = "2026-09-22 00:00";
 const urlsToCache = [
   "/grabcutter/index.js",
   "/grabcutter/img/before.webp",
@@ -11,7 +11,7 @@ const urlsToCache = [
 ];
 
 importScripts(
-  "https://cdn.jsdelivr.net/npm/wasm-feature-detect@1.8.0/dist/umd/index.min.js",
+  "https://cdn.jsdelivr.net/npm/wasm-feature-detect@1.9.0/dist/umd/index.min.js",
 );
 
 async function getOpenCVPath() {
