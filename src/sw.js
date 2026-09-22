@@ -8,6 +8,7 @@ const urlsToCache = [
   "/grabcutter/img/cat-64.webp",
   "/grabcutter/img/castle-64.webp",
   "/grabcutter/favicon/favicon.svg",
+  "https://cdn.jsdelivr.net/npm/wasm-feature-detect@1.9.0/dist/umd/index.min.js",
 ];
 
 importScripts(
